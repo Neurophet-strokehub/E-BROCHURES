@@ -33,21 +33,23 @@
     --footer-bg-color: #2c3e50;
     --text-color: #333;
     --overlay-bg-color: rgba(0, 0, 0, 0.6);
-    --btn-hover-opacity: 0.75;
+    --btn-hover-opacity: 0.2;
    }
-   
+   html{
+    display:flex;  
+    width: 100%;
+    height: 100vh;
+   }
    body {
     background-color: var(--background-color);
     overflow-x: hidden;
-    font-family: "Spoqa Han Sans Neo";
     font-weight: 300;
     font-size: calc(18px + 0.5vw);
-    text-align: center;
-    display:flex;
     width: 100%;
+    height: 100vh;
     padding-top: 60px; 
-   }
-   
+   } 
+
    .navbar {
     top: 0;
     left: 0;
@@ -89,80 +91,18 @@
     animation: slidein 7s infinite;
    }
    
-   @keyframes showup {
-    0% {
-     opacity: 0;
-    }
-   
-    20% {
-     opacity: 1;
-    }
-   
-    80% {
-     opacity: 1;
-    }
-   
-    100% {
-     opacity: 0;
-    }
-   }
-   
-   @keyframes slidein {
-    0% {
-     transform: translateX(-355px);
-    }
-   
-    20% {
-     transform: translateX(-355px);
-    }
-   
-    35% {
-     transform: translateX(0);
-    }
-   
-    100% {
-     transform: translateX(0);
-    }
-   }
-   
-   @keyframes reveal {
-    0% {
-     opacity: 0;
-     width: 0;
-    }
-   
-    20% {
-     opacity: 1;
-     width: 0;
-    }
-   
-    35% {
-     width: 355px;
-    }
-   
-    80% {
-     opacity: 1;
-    }
-   
-    100% {
-     opacity: 0;
-     width: 355px;
-    }
-   }
-   
-   
+    
    .content {
-    padding: 20px 40px;
+    padding: 20px 100px;
     min-height: calc(100vh - 110px); /* 50px (footer) + 60px (top) */
   }
-  
-   .filter-buttons {
+  .filter-buttons {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center; /* Added for vertical alignment */
-    margin-bottom: 20px;
-   }
+    justify-content: center; /* 버튼을 중앙 정렬 */
+    align-items: center; /* 버튼의 세로 정렬 */
+    margin: 20px;
+}
    
    .filter-buttons .btn {
     margin: 0 5px;
@@ -194,7 +134,7 @@
    
    .covers {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap;  
     gap: 5rem;
     justify-content: center;
     margin: 3rem;
@@ -298,7 +238,82 @@
         margin: 0 1rem;
       }
     }
+    .clipbook{
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      position: absolute;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-perspective: 600px;
+              perspective: 600px;
+    }
     
+   
+   @keyframes showup {
+    0% {
+     opacity: 0;
+    }
+   
+    20% {
+     opacity: 1;
+    }
+   
+    80% {
+     opacity: 1;
+    }
+   
+    100% {
+     opacity: 0;
+    }
+   }
+   
+   @keyframes slidein {
+    0% {
+     transform: translateX(-355px);
+    }
+   
+    20% {
+     transform: translateX(-355px);
+    }
+   
+    35% {
+     transform: translateX(0);
+    }
+   
+    100% {
+     transform: translateX(0);
+    }
+   }
+   
+   @keyframes reveal {
+    0% {
+     opacity: 0;
+     width: 0;
+    }
+   
+    20% {
+     opacity: 1;
+     width: 0;
+    }
+   
+    35% {
+     width: 355px;
+    }
+   
+    80% {
+     opacity: 1;
+    }
+   
+    100% {
+     opacity: 0;
+     width: 355px;
+    }
+   }
  </style>
 </head>
 
@@ -379,7 +394,7 @@
   </div>
  </div>
 
- <div id="flipbook" ></div>
+ <div id="flipbook" class="flipbook"></div>
 
  <footer class="footer">
   <p>&copy; 2024 Neurophet Marketing Team. All Rights Reserved.</p>
@@ -388,8 +403,7 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
  <script src="js/flipbook.min.js"></script>   
-
-<script>
+ <script>
   $(document).ready(function() {
     const $window = $(window);
     const $navbar = $(".navbar");
@@ -401,10 +415,21 @@
 
     function setActiveFilter(filterValue) {
         $filterBtns.removeClass("active").filter(`[data-filter="${filterValue}"]`).addClass("active");
-        $thumbs.each(function() {
-            const shouldShow = filterValue === "all" || $(this).data("category") === filterValue;
-            $(this).toggle(shouldShow);
-        });
+        
+        // 모든 썸네일을 처음에 숨김
+        $thumbs.hide();
+        
+        // 필터에 맞는 썸네일만 보이기
+        if (filterValue === "all") {
+            $thumbs.show(); // 모든 썸네일 보여주기
+        } else {
+            $thumbs.each(function() {
+                const shouldShow = $(this).data("category") === filterValue;
+                if (shouldShow) {
+                    $(this).show();
+                }
+            });
+        }
     }
 
     $filterBtns.on("click", function() {
@@ -412,6 +437,7 @@
         setActiveFilter(filterValue);
     });
 
+    // 초기 설정
     setActiveFilter("all");
 
     $thumbs.on("click", function() {
@@ -430,8 +456,8 @@
     // 이미지 지연 로딩 설정
     document.querySelectorAll("img").forEach(img => img.setAttribute("loading", "lazy"));
 });
-
 </script>
+
 </body>
 
 </html>
